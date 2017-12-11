@@ -2,18 +2,37 @@
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
+    
     this.sprite = 'images/enemy-bug.png';
+    this.speed = setSpeed()
+    this.x = -101
+    this.y = selectEnemyRow()
 };
 
+function setSpeed() {
+    speed = (Math.random() + 0.5) * 500
+    return speed
+}
+function selectEnemyRow() {
+    row = 60 + Math.floor(Math.random() * 3) * 83
+    return row
+}
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    if (this.x < 505) {
+        this.x = this.x + this.speed * dt
+    } else if (this.x > 505) {
+        const rowIndex = [0, 1, 2]
+        this.speed = setSpeed()
+        this.x = -101
+        this.y = selectEnemyRow()
+    }
 };
 
 // Draw the enemy on the screen, required method for game
@@ -25,11 +44,70 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 
+var Player = function() {
+    this.sprite = 'images/char-boy.png';
+    this.moveX = 0
+    this.moveY = 0
+    this.x = 1
+    this.y = -33
+}
 
+Player.prototype.update = function(dt) {
+    this.x = this.x + this.moveX
+    this.y = this.y + this.moveY
+    this.moveX = 0
+    this.moveY = 0
+
+}
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.handleInput = function(key) {
+    if (key === 'left') {
+        if (this.x >= 101) {
+            this.moveX = -101
+        } else {
+            this.moveX = 0
+        }
+    } else if (key === 'right') {
+        if (this.x <= 404) {
+            this.moveX = 101
+        } else {
+            this.moveX = 0
+        }
+    } else if (key === 'up') {
+        if (this.y >= 50) {
+            this.moveY = -83
+        } else {
+            this.moveY = 0
+        }
+    } else if (key === 'down') {
+        if (this.y <= 299 ) {
+            this.moveY = 83
+        } else {
+            this.moveY = 0
+        }
+    }
+}
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+
+function createEnemies() {
+    enemies = []
+    enemyCount = 1
+    for(let i = 0; i < enemyCount; i++) {
+        const enemy = new Enemy()
+        enemies.push(enemy)
+    }
+    return enemies
+}
+const allEnemies = createEnemies()
+
+const player = new Player()
 
 
 // This listens for key presses and sends the keys to your
@@ -41,6 +119,5 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
