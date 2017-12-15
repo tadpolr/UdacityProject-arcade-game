@@ -12,14 +12,14 @@ Cross the road and collect the star. Careful, it is not that easy!!!
 * [Setting](#setting)
 
 ## How to play
-* Simply open `index.html` file.
+* Simply open `index.html`.
 * Select your favourite character.
-* Click "START GAME" button to start game.
-* Cross the street and collect star to earn point as much as you can in limited time.
-* Avoid collision with enemy. (your character will be reset to the starting point when collide with the enemy )
-* Click on restart button to restart your game at anytime. 
+* Click "START GAME" to start game.
+* Cross the street and collect the star to earn as many points as you can within game time.
+* Avoid collision with enemy (your character will be reset to the starting point when collides with an enemy).
+* Click "RESTART" to restart your game at anytime. 
 
 ## Setting
-* To set game time, simply change value of `const gametime` in `engine.js`
-* To set enemy number, chage value of `const enemyCount` in `function createEnemy()` in `app.js`
-* To set enemy speed, change value of `const minSpeed` in `function setSpeed()` in `app.js`
+* To set game time, change value of `const gametime` in `engine.js`
+* To set enemy number, chage value of `const enemyCount` in `createEnemy()` in `app.js`
+* To set enemy speed, change value of `const minSpeed` in `setSpeed()` in `app.js`
