@@ -23,10 +23,14 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
+    
+    let stopId
 
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+
+    
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -44,6 +48,7 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
+
         update(dt);
         render();
         
@@ -55,9 +60,12 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
+   
+        stopId = win.requestAnimationFrame(main);
+    }
 
-
-        win.requestAnimationFrame(main);
+    function stopGame() {
+        win.cancelAnimationFrame(stopId)
     }
 
     /* This function does some initial setup that should only occur once,
@@ -65,9 +73,39 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
         lastTime = Date.now();
+        startTimer() 
         main();
+    }
+
+
+    /* This function is called by function "init" and "reset" to set timer 
+     * when start new game.
+     */
+    const gameTime = 10 // Set time per game here! 
+    let timerId
+
+    function startTimer() {
+        let time = gameTime
+        updateTimer(time) 
+        timerId = win.setInterval(function() {
+            time --
+            updateTimer(time)
+            if(time <= 0) {
+                stopTimer()
+                stopGame()
+                congratulation()
+            }
+        }, 1000)
+    }
+
+    function stopTimer() {
+        clearInterval(timerId)
+    }
+
+    function updateTimer(time) {
+        const timeCounter = doc.getElementById('timer')
+        timeCounter.innerHTML = time.toString()
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -81,7 +119,8 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+        checkPoints();
     }
 
     /* This is called by the update function and loops through all of the
@@ -97,6 +136,43 @@ var Engine = (function(global) {
         });
         player.update();
     }
+
+    /* This is called by the update function and loops through all of the objects 
+     * to check if there is any collision between enemy and player.
+     */
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            if( (player.x - 50) <= enemy.x && enemy.x <= (player.x + 101) && (player.y) === enemy.y ) {
+                player.reset()
+            }
+        })
+    }
+
+    /* This variables are used to store and show current points of the game. */
+    let points = 0
+    const pointCounter = doc.getElementById('points')
+
+    /* This is called by the update function to check if player get more point or not. */
+    function checkPoints() {
+        if(player.y < 83 - 33) {
+            points++
+            updatePoints()
+            player.reset()
+            star.reset()
+        }
+    }
+
+    /* This function update points in pointCounter element. */
+    function updatePoints() {
+        pointCounter.innerHTML = points.toString()
+    }
+
+    /* This is called by reset function to reset points when start a new game */
+    function resetPoints() {
+        points = 0
+        updatePoints()
+    }
+
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -156,14 +232,31 @@ var Engine = (function(global) {
         });
 
         player.render();
+        star.render();
     }
+
+
 
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
+    const resetButton = doc.getElementById('reset')
+    resetButton.onclick = reset
+
     function reset() {
-        // noop
+        stopGame()
+        stopTimer()
+
+        resetPoints()
+        allEnemies.forEach(function(enemy) {
+            enemy.reset();
+        });
+        player.reset()
+        star.reset()
+
+        startTimer()
+        main()
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -175,9 +268,48 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
+        'images/Star.png',
     ]);
-    Resources.onReady(init);
+    Resources.onReady(createStartButton);
+
+    /* Create start button that will be clicked to start game after selcting character */
+    function createStartButton() {
+        const startButton = doc.getElementById('start')
+        const settingSection = doc.getElementById('settingSection')
+        const playSection = doc.getElementById('playSection')
+
+        startButton.onclick = function() {
+            settingSection.setAttribute('style', 'display: none')
+            startButton.setAttribute('style', 'display: none')
+            playSection.setAttribute('style', 'display: block')
+            init()
+        }    
+    }
+
+    /* This is called when the game has finished to create congratulation modal 
+     * that show result of the game.
+     */
+    function congratulation() {
+        const congratModal = doc.getElementById('congratModal')
+        const result = doc.getElementById('result')
+        const playAgainButton = doc.getElementById('playAgain')
+        const stopPlayingButton = doc.getElementById('stopPlaying')
+
+        congratModal.setAttribute('style', 'display: block')
+        result.innerHTML = points.toString()
+        playAgainButton.onclick = function() {
+            congratModal.setAttribute('style', 'display: none')
+            reset()
+        }
+        stopPlayingButton.onclick = function() {
+            congratModal.setAttribute('style', 'display: none')
+        }
+    }
 
     /* Assign the canvas' context object to the global variable (the window
      * object when run in a browser) so that developers can use it more easily
@@ -185,4 +317,6 @@ var Engine = (function(global) {
      */
     global.ctx = ctx;
 })(this);
+
+
 

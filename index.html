@@ -6,8 +6,41 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <script src="js/resources.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/engine.js"></script>
+    <div id="congratModal" class="modal">
+        <div class="modal-content">
+            <p>Congratulation!</p>
+            <p>You scored <span id="result"></span> points
+            <p>Play it again?</p>
+            <button id="playAgain" class="modal-button">Yes</button>
+            <button id="stopPlaying" class="modal-button">No</button>
+        </div>
+    </div>
+
+    <div id="settingSection">
+        <h2>Your Character</h2>
+        <img src="./images/char-boy.png" width="160px" id="current-char">
+        <h4 class="select-char-title">Select Character</h4>
+        <div class="select-char-section" id="select-char">
+            <img src="images/char-boy.png" class="char-img" id="boy">
+            <img src="images/char-cat-girl.png" class="char-img" id="cat">
+            <img src="images/char-horn-girl.png" class="char-img" id="horn">
+            <img src="images/char-pink-girl.png" class="char-img" id="pink">
+            <img src="images/char-princess-girl.png" class="char-img" id="princess">
+        </div>  
+    </div>
+    <h1 class="button" id="start">START GAME</h1>
+
+    <div class="play-section" id="playSection">
+        <h1>Have Fun!</h1>
+        <p>How to play : Collect stars and avoid collision with enemy!!</p>
+        <div class="game-header">
+            <p>Points: <span id='points'>0</span></p>
+            <p>Time left:<span id='timer'></span></p>
+            <p class="button" id='reset'>RESET</p>
+        </div>
+        <script src="js/resources.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/engine.js"></script>
+    </div>
 </body>
 </html>

@@ -4,20 +4,26 @@ var Enemy = function() {
     // we've provided one for you to get started
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    
-    this.sprite = 'images/enemy-bug.png';
+    this.sprite = 'images/enemy-bug.png'; 
     this.speed = setSpeed()
     this.x = -101
     this.y = selectEnemyRow()
 };
 
 function setSpeed() {
-    speed = (Math.random() + 0.5) * 500
+    const minSpeed = 0.5
+    const speed = (Math.random() + minSpeed) * 300
     return speed
 }
 function selectEnemyRow() {
-    row = 60 + Math.floor(Math.random() * 3) * 83
+    const row = -33 + Math.ceil(Math.random() * 3) * 83
     return row
+}
+
+Enemy.prototype.reset = function() {
+    this.x = -101
+    this.y = selectEnemyRow()
+    this.speed = setSpeed()
 }
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -46,18 +52,26 @@ Enemy.prototype.render = function() {
 
 var Player = function() {
     this.sprite = 'images/char-boy.png';
+    this.startX = 202
+    this.startY = -33 + (83 * 5)
+    this.x = this.startX
+    this.y = this.startY
     this.moveX = 0
     this.moveY = 0
-    this.x = 1
-    this.y = -33
 }
 
-Player.prototype.update = function(dt) {
+Player.prototype.reset = function() {
+    this.x = this.startX
+    this.y = this.startY
+    this.moveX = 0
+    this.moveY = 0
+}
+
+Player.prototype.update = function() {
     this.x = this.x + this.moveX
     this.y = this.y + this.moveY
     this.moveX = 0
     this.moveY = 0
-
 }
 
 Player.prototype.render = function() {
@@ -72,13 +86,13 @@ Player.prototype.handleInput = function(key) {
             this.moveX = 0
         }
     } else if (key === 'right') {
-        if (this.x <= 404) {
+        if (this.x <= 303) {
             this.moveX = 101
         } else {
             this.moveX = 0
         }
     } else if (key === 'up') {
-        if (this.y >= 50) {
+        if (this.y >= 133 || this.x === star.x) {
             this.moveY = -83
         } else {
             this.moveY = 0
@@ -91,24 +105,55 @@ Player.prototype.handleInput = function(key) {
         }
     }
 }
+
+// Star that must collect to get more points
+var Star = function() {
+    this.sprite = 'images/Star.png'
+    this.x = randomStar()
+    this.y = -33
+}
+
+function randomStar() {
+    return Math.round(Math.random() * 4) * 101
+}
+
+Star.prototype.reset = function() {
+    this.x = randomStar()
+}
+
+Star.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
-
 function createEnemies() {
-    enemies = []
-    enemyCount = 1
+    let enemies = []
+    const enemyCount = 3
     for(let i = 0; i < enemyCount; i++) {
         const enemy = new Enemy()
         enemies.push(enemy)
     }
     return enemies
 }
+
 const allEnemies = createEnemies()
-
 const player = new Player()
+const star = new Star()
 
+// Allow player to select their favourite character before game start
+const chars = document.getElementsByClassName('char-img')
+const currentChar = document.getElementById('current-char')
+for (let i = 0; i < chars.length; i++) {
+    const char = chars[i]
+    const charImg = char.getAttribute('src')
+
+    char.onclick = function(){
+        currentChar.src = char.src
+        player.sprite = charImg
+    }
+}
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
