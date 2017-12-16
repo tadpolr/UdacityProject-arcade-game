@@ -1,29 +1,31 @@
 // Enemies our player must avoid
+'use strict'
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png'; 
-    this.speed = setSpeed()
-    this.x = -101
-    this.y = selectEnemyRow()
+    this.speed = this.setSpeed();
+    this.x = -101;
+    this.y = this.selectEnemyRow();
 };
 
-function setSpeed() {
-    const minSpeed = 0.5
-    const speed = (Math.random() + minSpeed) * 300
-    return speed
+Enemy.prototype.selectEnemyRow = function() {
+    const row = -33 + Math.ceil(Math.random() * 3) * 83;
+    return row;
 }
-function selectEnemyRow() {
-    const row = -33 + Math.ceil(Math.random() * 3) * 83
-    return row
+
+Enemy.prototype.setSpeed = function() {
+    const minSpeed = 0.5;
+    const speed = (Math.random() + minSpeed) * 300;
+    return speed;
 }
 
 Enemy.prototype.reset = function() {
-    this.x = -101
-    this.y = selectEnemyRow()
-    this.speed = setSpeed()
+    this.x = -101;
+    this.y = this.selectEnemyRow();
+    this.speed = this.setSpeed();
 }
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -34,10 +36,7 @@ Enemy.prototype.update = function(dt) {
     if (this.x < 505) {
         this.x = this.x + this.speed * dt
     } else if (this.x > 505) {
-        const rowIndex = [0, 1, 2]
-        this.speed = setSpeed()
-        this.x = -101
-        this.y = selectEnemyRow()
+        this.reset()
     }
 };
 
