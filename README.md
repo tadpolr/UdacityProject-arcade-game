@@ -6,6 +6,7 @@ Students should use this [rubric](https://review.udacity.com/#!/projects/2696458
 For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true). -->
 # Arcade Game Project
 Cross the road and collect the star. Careful, it is not that easy!!!
+![ScreenShot](relative/path/to/ScreenshotPic.png?raw=true "Title")
 ## Table of Contents
 
 * [How to play](#how-to-play)
